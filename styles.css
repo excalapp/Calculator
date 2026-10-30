@@ -52,6 +52,25 @@
   --shadow-2: 0 1px 2px rgb(0 0 0 / .3), 0 2px 6px 2px rgb(0 0 0 / .15);
   color-scheme: dark;
 }
+/* Festive themes: candy-cane red primary, pine green growth, gold interest. Chosen from the theme button. */
+:root[data-theme="christmas"] {
+  --bg: #fbf6ee; --surface: #ffffff; --surface-2: #f6ece0; --surface-3: #efe1d0; --ink: #2a1a14; --muted: #5c4a40;
+  --line: #e2d2c0; --outline: #8a7466; --accent: #b3122e; --accent-ink: #ffffff; --accent-soft: #fbdadd; --accent-soft-ink: #4a0612;
+  --principal: #b3122e; --interest: #a86a00; --interest-soft: #fbedc8; --deposit: #6b3fa0; --growth: #1b6b3a;
+  --state-hover: rgb(42 26 20 / .08);
+  --snow: rgb(179 18 46 / .07);
+  color-scheme: light;
+}
+:root[data-theme="christmas-night"] {
+  --bg: #0d1f17; --surface: #13291f; --surface-2: #1a3428; --surface-3: #234032; --ink: #f3eee6; --muted: #c9c2b6;
+  --line: #2f4d3e; --outline: #7f998b; --accent: #ff8a8a; --accent-ink: #4a0612; --accent-soft: #7a1022; --accent-soft-ink: #ffe1e1;
+  --principal: #ff8a8a; --interest: #f2c94c; --interest-soft: #3d3000; --deposit: #d7aefb; --growth: #7fdc9c;
+  --state-hover: rgb(243 238 230 / .08);
+  --shadow: 0 1px 2px rgb(0 0 0 / .4), 0 1px 3px 1px rgb(0 0 0 / .2);
+  --shadow-2: 0 1px 2px rgb(0 0 0 / .4), 0 2px 6px 2px rgb(0 0 0 / .2);
+  --snow: rgb(255 255 255 / .55);
+  color-scheme: dark;
+}
 
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
@@ -240,6 +259,28 @@ input[type="range"]:focus-visible { outline: none; }
 
 .footnote { color: var(--muted); font-size: 13px; margin: 0; max-width: 80ch; }
 .site-foot { color: var(--muted); font-size: 13px; padding-block: 20px 40px; border-top: 1px solid var(--line); }
+
+/* ---------- festive extras (christmas themes only) ---------- */
+:root[data-theme^="christmas"] .topbar { box-shadow: none; }
+:root[data-theme^="christmas"] .topbar::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -4px; height: 4px;
+  background: repeating-linear-gradient(-45deg, var(--accent) 0 10px, var(--surface) 10px 20px, var(--growth) 20px 30px, var(--surface) 30px 40px);
+}
+:root[data-theme^="christmas"] .brand::after { content: "★"; color: var(--interest); font-size: 16px; margin-left: -4px; align-self: flex-start; }
+:root[data-theme^="christmas"] .hero-card { background-image: linear-gradient(135deg, transparent 60%, color-mix(in srgb, var(--growth) 14%, transparent)); }
+:root[data-theme^="christmas"] body::before {
+  content: ""; position: fixed; inset: -200px 0 0; z-index: 0; pointer-events: none;
+  background-image:
+    radial-gradient(3px 3px at 20px 30px, var(--snow) 50%, transparent 51%),
+    radial-gradient(2px 2px at 90px 120px, var(--snow) 50%, transparent 51%),
+    radial-gradient(4px 4px at 150px 60px, var(--snow) 50%, transparent 51%),
+    radial-gradient(2px 2px at 60px 170px, var(--snow) 50%, transparent 51%),
+    radial-gradient(3px 3px at 180px 180px, var(--snow) 50%, transparent 51%);
+  background-size: 200px 200px;
+  animation: snowfall 18s linear infinite;
+}
+:root[data-theme^="christmas"] main, :root[data-theme^="christmas"] .site-foot { position: relative; z-index: 1; }
+@keyframes snowfall { to { transform: translateY(200px); } }
 
 @media (max-width: 1080px) {
   .chart-grid { grid-template-columns: 1fr; }

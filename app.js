@@ -493,8 +493,10 @@
     persist();
   }
 
-  // Theme: system → light → dark → system
+  // Theme: system → light → dark → christmas → christmas-night → system
+  const THEMES = ["", "light", "dark", "christmas", "christmas-night"];
   function applyTheme(t) {
+    if (!THEMES.includes(t)) t = "";
     if (t) document.documentElement.dataset.theme = t;
     else delete document.documentElement.dataset.theme;
     $("#theme-btn").title = `Theme: ${t || "system"}`;
@@ -538,9 +540,8 @@
   window.addEventListener("hashchange", () => showTab(location.hash.slice(1)));
 
   $("#theme-btn").addEventListener("click", () => {
-    const order = ["", "light", "dark"];
     const cur = document.documentElement.dataset.theme || "";
-    applyTheme(order[(order.indexOf(cur) + 1) % order.length]);
+    applyTheme(THEMES[(THEMES.indexOf(cur) + 1) % THEMES.length]);
     buildCharts(); renderMortgage(); renderSavings(); persist();
   });
   window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
