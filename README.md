@@ -30,6 +30,13 @@ python3 -m http.server 5173
 
 Then visit http://localhost:5173. Use `#mortgage` or `#savings` in the URL to link straight to a tab.
 
+## Automation
+
+Issues are fixed by Claude and deployed to GitHub Pages once an admin approves and merges the pull request. Live site: https://excalapp.github.io/Calculator/
+
+- [Setting up issue-to-deploy automation](docs/SETUP.md)
+- [Live demo playbook](docs/DEMO-PLAYBOOK.md)
+
 ## The math
 
 - Monthly payment: `M = P·r(1+r)^n / ((1+r)^n − 1)`, where `r` is the monthly rate and `n` the number of payments (`M = P/n` at 0%).
