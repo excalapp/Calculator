@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>FinTechCo Calculator</title>
+  <meta name="description" content="Mortgage and compound interest calculator with amortization schedule and charts.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap topbar-inner">
+      <a class="brand" href="#mortgage" aria-label="FinTechCo home">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6 27V14L16 5l10 9v13h-7v-8h-6v8z" fill="currentColor"/></svg>
+        <span>FinTechCo</span>
+      </a>
+      <nav class="tabs" role="tablist" aria-label="Calculators">
+        <button class="tab" role="tab" id="tab-mortgage" aria-controls="panel-mortgage" data-tab="mortgage">Mortgage</button>
+        <button class="tab" role="tab" id="tab-savings" aria-controls="panel-savings" data-tab="savings">Savings growth</button>
+      </nav>
+      <button class="theme-btn" id="theme-btn" type="button" aria-label="Switch color theme" title="Switch color theme">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z" fill="currentColor"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- ============ MORTGAGE ============ -->
+    <section class="panel" id="panel-mortgage" role="tabpanel" aria-labelledby="tab-mortgage">
+      <div class="intro">
+        <h1>What will this home really cost?</h1>
+        <p>Set the price, down payment, rate and term. Your monthly payment, full amortization schedule and lifetime interest update as you go.</p>
+      </div>
+
+      <div class="layout">
+        <form class="controls" id="mortgage-form" autocomplete="off">
+          <div class="field">
+            <div class="field-head">
+              <label for="m-price">Home price</label>
+              <div class="num"><span class="affix">$</span><input id="m-price-n" type="number" inputmode="decimal" aria-label="Home price"></div>
+            </div>
+            <input id="m-price" type="range" min="50000" max="2000000" step="5000" value="450000">
+            <div class="scale"><span>$50k</span><span>$2M</span></div>
+          </div>
+
+          <div class="field">
+            <div class="field-head">
+              <label for="m-down">Down payment</label>
+              <div class="num"><input id="m-down-n" type="number" inputmode="decimal" aria-label="Down payment percent"><span class="affix">%</span></div>
+            </div>
+            <input id="m-down" type="range" min="0" max="60" step="1" value="20">
+            <div class="scale"><span>0%</span><output id="m-down-amt" class="hint"></output><span>60%</span></div>
+          </div>
+
+          <div class="field">
+            <div class="field-head">
+              <label for="m-rate">Interest rate</label>
+              <div class="num"><input id="m-rate-n" type="number" inputmode="decimal" aria-label="Interest rate"><span class="affix">% APR</span></div>
+            </div>
+            <input id="m-rate" type="range" min="0" max="15" step="0.05" value="6.5">
+            <div class="scale"><span>0%</span><span>15%</span></div>
+          </div>
+
+          <div class="field">
+            <div class="field-head"><span class="label" id="m-term-label">Loan term</span></div>
+            <div class="segmented" id="m-term" role="radiogroup" aria-labelledby="m-term-label" data-value="30">
+              <button type="button" role="radio" data-value="10">10 yr</button>
+              <button type="button" role="radio" data-value="15">15 yr</button>
+              <button type="button" role="radio" data-value="20">20 yr</button>
+              <button type="button" role="radio" data-value="25">25 yr</button>
+              <button type="button" role="radio" data-value="30">30 yr</button>
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="field-head">
+              <label for="m-extra">Extra principal / month</label>
+              <div class="num"><span class="affix">$</span><input id="m-extra-n" type="number" inputmode="decimal" aria-label="Extra principal per month"></div>
+            </div>
+            <input id="m-extra" type="range" min="0" max="3000" step="25" value="0">
+            <div class="scale"><span>$0</span><span>$3,000</span></div>
+          </div>
+
+          <div class="field">
+            <div class="field-head">
+              <label for="m-start">First payment</label>
+              <input id="m-start" type="month" class="month">
+            </div>
+          </div>
+        </form>
+
+        <div class="results">
+          <div class="hero-card">
+            <div class="hero-main">
+              <span class="eyebrow">Monthly principal &amp; interest</span>
+              <strong class="big" id="m-payment">$0</strong>
+              <span class="sub" id="m-payment-sub"></span>
+            </div>
+            <dl class="stats">
+              <div><dt>Loan amount</dt><dd id="m-loan">$0</dd></div>
+              <div><dt>Total interest</dt><dd id="m-interest" class="t-interest">$0</dd></div>
+              <div><dt>Total of payments</dt><dd id="m-total">$0</dd></div>
+              <div><dt>Paid off</dt><dd id="m-payoff">—</dd></div>
+            </dl>
+            <p class="savings-pill" id="m-saved" hidden></p>
+          </div>
+
+          <div class="chart-grid">
+            <figure class="card chart-card donut-card">
+              <figcaption><h2>Where the money goes</h2></figcaption>
+              <div class="donut-wrap">
+                <canvas id="m-chart-split" aria-label="Principal versus interest share" role="img"></canvas>
+                <div class="donut-center"><span id="m-ratio">0%</span><small>of every dollar is interest</small></div>
+              </div>
+            </figure>
+            <figure class="card chart-card">
+              <figcaption>
+                <h2>Total interest paid over time</h2>
+                <p>Cumulative interest against the shrinking balance.</p>
+              </figcaption>
+              <div class="chart-box"><canvas id="m-chart-balance" aria-label="Cumulative interest and remaining balance by year" role="img"></canvas></div>
+            </figure>
+          </div>
+
+          <figure class="card chart-card">
+            <figcaption>
+              <h2>Principal vs. interest, year by year</h2>
+              <p>Early payments are mostly interest. The crossover is when equity starts building faster.</p>
+            </figcaption>
+            <div class="chart-box tall"><canvas id="m-chart-years" aria-label="Principal and interest paid per year" role="img"></canvas></div>
+          </figure>
+
+          <section class="card table-card" aria-labelledby="m-sched-title">
+            <div class="table-head">
+              <h2 id="m-sched-title">Amortization schedule</h2>
+              <div class="table-actions">
+                <div class="segmented small" id="m-view" role="radiogroup" aria-label="Schedule view" data-value="yearly">
+                  <button type="button" role="radio" data-value="yearly">Yearly</button>
+                  <button type="button" role="radio" data-value="monthly">Monthly</button>
+                </div>
+                <button type="button" class="ghost-btn" id="m-csv">Export CSV</button>
+              </div>
+            </div>
+            <div class="table-scroll">
+              <table class="sched" id="m-table">
+                <thead><tr><th>Period</th><th>Payment</th><th>Principal</th><th>Interest</th><th>Total interest</th><th>Balance</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </section>
+
+          <p class="footnote">Payment uses the standard amortization formula <code>M = P·r(1+r)<sup>n</sup> ÷ ((1+r)<sup>n</sup> − 1)</code>, where r is the monthly rate and n the number of payments. Taxes, insurance, PMI and HOA dues are not included.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SAVINGS ============ -->
+    <section class="panel" id="panel-savings" role="tabpanel" aria-labelledby="tab-savings" hidden>
+      <div class="intro">
+        <h1>How far will steady saving take you?</h1>
+        <p>Start with a lump sum, add to it every month, and watch compound interest do the heavy lifting over time.</p>
+      </div>
+
+      <div class="layout">
+        <form class="controls" id="savings-form" autocomplete="off">
+          <div class="field">
+            <div class="field-head">
+              <label for="s-initial">Starting balance</label>
+              <div class="num"><span class="affix">$</span><input id="s-initial-n" type="number" inputmode="decimal" aria-label="Starting balance"></div>
+            </div>
+            <input id="s-initial" type="range" min="0" max="250000" step="500" value="10000">
+            <div class="scale"><span>$0</span><span>$250k</span></div>
+          </div>
+
+          <div class="field">
+            <div class="field-head">
+              <label for="s-monthly">Monthly contribution</label>
+              <div class="num"><span class="affix">$</span><input id="s-monthly-n" type="number" inputmode="decimal" aria-label="Monthly contribution"></div>
+            </div>
+            <input id="s-monthly" type="range" min="0" max="10000" step="25" value="500">
+            <div class="scale"><span>$0</span><span>$10k</span></div>
+          </div>
+
+          <div class="field">
+            <div class="field-head">
+              <label for="s-rate">Annual return</label>
+              <div class="num"><input id="s-rate-n" type="number" inputmode="decimal" aria-label="Annual return"><span class="affix">%</span></div>
+            </div>
+            <input id="s-rate" type="range" min="0" max="15" step="0.1" value="7">
+            <div class="scale"><span>0%</span><span>15%</span></div>
+          </div>
+
+          <div class="field">
+            <div class="field-head">
+              <label for="s-years">Years to grow</label>
+              <div class="num"><input id="s-years-n" type="number" inputmode="numeric" aria-label="Years to grow"><span class="affix">yrs</span></div>
+            </div>
+            <input id="s-years" type="range" min="1" max="50" step="1" value="25">
+            <div class="scale"><span>1</span><span>50</span></div>
+          </div>
+
+          <div class="field">
+            <div class="field-head"><span class="label" id="s-comp-label">Compounding</span></div>
+            <div class="segmented" id="s-comp" role="radiogroup" aria-labelledby="s-comp-label" data-value="12">
+              <button type="button" role="radio" data-value="1">Yearly</button>
+              <button type="button" role="radio" data-value="4">Quarterly</button>
+              <button type="button" role="radio" data-value="12">Monthly</button>
+              <button type="button" role="radio" data-value="365">Daily</button>
+            </div>
+          </div>
+
+          <details class="advanced" id="s-advanced">
+            <summary>Advanced</summary>
+            <div class="field">
+              <div class="field-head">
+                <label for="s-step">Raise contribution yearly by</label>
+                <div class="num"><input id="s-step-n" type="number" inputmode="decimal" aria-label="Yearly contribution increase"><span class="affix">%</span></div>
+              </div>
+              <input id="s-step" type="range" min="0" max="10" step="0.5" value="0">
+            </div>
+            <div class="field">
+              <div class="field-head">
+                <label for="s-infl">Inflation</label>
+                <div class="num"><input id="s-infl-n" type="number" inputmode="decimal" aria-label="Inflation rate"><span class="affix">%</span></div>
+              </div>
+              <input id="s-infl" type="range" min="0" max="8" step="0.1" value="2.5">
+            </div>
+          </details>
+        </form>
+
+        <div class="results">
+          <div class="hero-card grow">
+            <div class="hero-main">
+              <span class="eyebrow" id="s-eyebrow">Balance after 25 years</span>
+              <strong class="big" id="s-final">$0</strong>
+              <span class="sub" id="s-real"></span>
+            </div>
+            <dl class="stats">
+              <div><dt>You deposit</dt><dd id="s-contrib" class="t-deposit">$0</dd></div>
+              <div><dt>Interest earned</dt><dd id="s-earned" class="t-growth">$0</dd></div>
+              <div><dt>Growth multiple</dt><dd id="s-multiple">0×</dd></div>
+              <div><dt>Interest overtakes deposits</dt><dd id="s-cross">—</dd></div>
+            </dl>
+          </div>
+
+          <figure class="card chart-card">
+            <figcaption>
+              <h2>Deposits vs. compound growth</h2>
+              <p>The green band is money you never had to put in yourself.</p>
+            </figcaption>
+            <div class="chart-box tall"><canvas id="s-chart" aria-label="Balance split into deposits and interest by year" role="img"></canvas></div>
+          </figure>
+
+          <section class="card table-card" aria-labelledby="s-sched-title">
+            <div class="table-head">
+              <h2 id="s-sched-title">Year-by-year growth</h2>
+              <div class="table-actions"><button type="button" class="ghost-btn" id="s-csv">Export CSV</button></div>
+            </div>
+            <div class="table-scroll">
+              <table class="sched" id="s-table">
+                <thead><tr><th>Year</th><th>Deposited</th><th>Interest</th><th>Total deposited</th><th>Total interest</th><th>Balance</th><th>Today’s dollars</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </section>
+
+          <p class="footnote">Future value with periodic contributions: <code>FV = P(1+r/n)<sup>nt</sup> + PMT × series growth</code>. Contributions are added at the end of each month, and the chosen compounding is converted to an equivalent monthly rate. Returns are assumed constant; real markets vary.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="wrap site-foot">Estimates for planning only, not financial advice. Everything is calculated in your browser.</footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
