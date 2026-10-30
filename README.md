@@ -18,7 +18,7 @@ A mortgage and compound-interest calculator that runs entirely in the browser. P
 - Stacked chart of deposits vs. compound growth plus the inflation-adjusted balance
 - Year-by-year table with CSV export
 
-Also: light/dark theme (follows the system by default), keyboard-accessible controls, responsive down to phone width, and inputs remembered in `localStorage`.
+Also: light/dark theme (follows the system by default) plus festive Christmas day and night themes, keyboard-accessible controls, responsive down to phone width, and inputs remembered in `localStorage`.
 
 ## Run it
 
