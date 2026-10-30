@@ -183,7 +183,7 @@
       plugins: {
         legend: { position: "bottom", align: "start", labels: { color: p.muted, usePointStyle: true, pointStyle: "rectRounded", boxWidth: 10, boxHeight: 10, padding: 16 } },
         tooltip: {
-          backgroundColor: p.ink, titleColor: p.surface, bodyColor: p.surface, padding: 10, cornerRadius: 8,
+          backgroundColor: p.ink, titleColor: p.surface, bodyColor: p.surface, padding: 10, cornerRadius: 4,
           callbacks: { label: (ctx) => ` ${ctx.dataset.label}: ${usd0.format(ctx.parsed.y ?? ctx.parsed)}` },
         },
       },
@@ -194,7 +194,7 @@
     };
   }
 
-  Chart.defaults.font.family = '"IBM Plex Sans", system-ui, sans-serif';
+  Chart.defaults.font.family = '"Roboto", system-ui, sans-serif';
   Chart.defaults.font.size = 12;
 
   const charts = {};
