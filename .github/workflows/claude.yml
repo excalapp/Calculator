@@ -41,10 +41,32 @@ jobs:
 
       - name: Run Claude
         uses: anthropics/claude-code-action@v1
-        env:
-          GH_TOKEN: ${{ github.token }}
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           claude_args: |
-            --allowedTools "Bash(gh pr create:*),Bash(gh pr view:*),Bash(node --check:*),Bash(node:*)"
-            --append-system-prompt "When you are working from an issue and have pushed your fix, open a pull request into main with gh pr create. Title it after the fix and put 'Fixes #<issue number>' in the body so merging closes the issue. Follow CLAUDE.md."
+            --allowedTools "Bash(node --check:*),Bash(node:*)"
+            --append-system-prompt "Follow CLAUDE.md. A later workflow step opens the pull request for your branch, so you don't need to."
+
+      # On issues, Claude pushes a claude/issue-<N>-<timestamp> branch but only
+      # posts a "Create PR" link. Open the PR here so it's ready for review.
+      - name: Open pull request for Claude's branch
+        if: github.event_name == 'issues' || (github.event_name == 'issue_comment' && !github.event.issue.pull_request)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE: ${{ github.event.issue.number }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+        run: |
+          branch=$(git ls-remote --heads origin "claude/issue-${ISSUE}-*" | awk '{print $2}' | sort | tail -1 | sed 's#^refs/heads/##')
+          if [ -z "$branch" ]; then
+            echo "Claude pushed no branch for issue #${ISSUE}; nothing to open."
+            exit 0
+          fi
+          if [ -n "$(gh pr list --head "$branch" --state all --json number --jq '.[].number')" ]; then
+            echo "A pull request for $branch already exists."
+            exit 0
+          fi
+          gh pr create --base main --head "$branch" \
+            --title "$ISSUE_TITLE" \
+            --body "Fixes #${ISSUE}
+
+          Claude's changes for issue #${ISSUE}. Claude's comment on the issue explains what changed and what wasn't checked."
